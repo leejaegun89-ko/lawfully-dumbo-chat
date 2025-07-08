@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>[#WB-1524] Users can set up periodic auto notifications to inform end users when there are no updates</title>
+    <meta http-equiv="Content-Type" Content="application/vnd.ms-word; charset=UTF-8">
+        <style type="text/css">
+
+.tableBorder, .grid
+{
+    background-color: #fff;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableBorder td, .grid td
+{
+    vertical-align: top;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+.noPadding
+{
+    padding: 0 !important;
+}
+
+h3 .subText
+{
+    font-size: 60%;
+    font-weight: normal;
+}
+
+.tabLabel
+{
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-bottom:none;
+    padding: 2px;
+    display: inline;
+}
+
+td.blank
+{
+    padding: 0;
+    margin: 0;
+}
+
+.blank td
+{
+    border: none;
+}
+
+#descriptionArea
+{
+    margin: 0;
+    padding: 2px;
+    border: 1px solid #ccc;
+}
+
+hr
+{
+    border-top:1px solid #aaa;
+}
+
+hr.fullcontent
+{
+  height: 15px;
+  padding: 10px 0;
+  background: #fff url('https://lawfully-dev.atlassian.net/images/icons/hr.gif') no-repeat scroll center;
+}
+
+</style>
+
+</head>
+<body>
+
+<table class="tableBorder" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" width="100%" colspan="2" valign="top">
+                            <b><a id="parent_issue_summary" href="https://lawfully-dev.atlassian.net/browse/WB-1178">Lawfully Pro</a></b>
+                <span style="font-size: 9px">(<a id="parent_issue_key" href="https://lawfully-dev.atlassian.net/browse/WB-1178">WB-1178</a>)</span>
+                <h3 class="formtitle"><img src="https://lawfully-dev.atlassian.net/images/icons/link_out_bot.gif" width="16" height="16" />
+                        [WB-1524]&nbsp;<a href="https://lawfully-dev.atlassian.net/browse/WB-1524">Users can set up periodic auto notifications to inform end users when there are no updates</a>
+            <span class="subText">
+               Created: 26/Jun/25                   &nbsp;Updated: 02/Jul/25
+
+                                            </span>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Status:</b></td>
+        <td width="80%">To Do</td>
+    </tr>
+    <tr>
+        <td width="20%"><b>Project:</b></td>
+        <td width="80%"><a href="https://lawfully-dev.atlassian.net/secure/BrowseProject.jspa?id=10028">Lawfully Web</a></td>
+    </tr>
+
+        <tr>
+            <td><b>Components:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Affects versions:</b></td>
+            <td>
+                            None
+                </td>
+    </tr>
+    
+
+        <tr>
+            <td><b>Fix versions:</b></td>
+            <td>
+                                        <a title="Lawfully Pro v1.20"
+                href="https://lawfully-dev.atlassian.net/issues/?jql=project%3D10028%20AND%20%22fixVersion%22%3D10877%20ORDER%20BY%20priority%20ASC"
+            >Lawfully Pro v1.20</a>                        </td>
+    </tr>
+    
+    
+            <td width="20%"><b>Parent:</b></td>
+        <td width="80%"><a href="https://lawfully-dev.atlassian.net/browse/WB-1178">Lawfully Pro</a></td>
+    </table>
+
+<br />
+<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" valign="top" width="20%">
+            <b>Type:</b>
+        </td>
+        <td bgcolor="#ffffff" valign="top"  width="30%" >
+            Story
+        </td>
+
+                    <td bgcolor="#f0f0f0">
+                <b>Priority:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap>
+                Medium
+            </td>
+            </tr>
+    <tr>
+                        <td bgcolor="#f0f0f0" valign="top" width="20%">
+                <b>Reporter:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top"  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:618300d1-111b-400c-868d-e68604b44fba"
+                id="word_reporter_712020:618300d1-111b-400c-868d-e68604b44fba"
+                href="https://lawfully-dev.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A618300d1-111b-400c-868d-e68604b44fba">
+                    Jae Lee
+                </a>
+
+                            </td>
+        
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Assignee:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" nowrap  width="30%" >
+                                        
+                
+        
+            <a class="user-hover" rel="712020:618300d1-111b-400c-868d-e68604b44fba"
+                id="word_assignee_712020:618300d1-111b-400c-868d-e68604b44fba"
+                href="https://lawfully-dev.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A618300d1-111b-400c-868d-e68604b44fba">
+                    Jae Lee
+                </a>
+
+                            </td>
+            </tr>
+    	<tr>
+		<td bgcolor="#f0f0f0" width="20%">
+			<b>Resolution:</b>
+		</td>
+		<td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+            				Unresolved
+                    </td>
+                    <td bgcolor="#f0f0f0" width="20%">
+                <b>Votes:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top" width="30%" nowrap>
+                0
+            </td>
+        
+    </tr>
+    
+        <tr>
+        <td bgcolor="#f0f0f0" width="20%">
+            <b>Labels:</b>
+        </td>
+        <td id="labels-18229-value" class="value" bgcolor="#ffffff" valign="top" colspan="3" nowrap>
+                            None
+                    </td>
+    </tr>
+    
+    	<tr>
+        		<td bgcolor="#f0f0f0" width="20%"><b>Remaining Estimate:</b></td>
+        <td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+    </tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Time Spent:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+	</tr>
+    <tr>
+                <td bgcolor="#f0f0f0" width="20%"><b>Original estimate:</b></td>
+		<td bgcolor="#ffffff" valign="top" nowrap width="80%" colspan="3">
+                            Not Specified
+            		</td>
+    </tr>
+    
+    </table>
+
+
+
+    <br />
+
+    	<table class="grid" cellpadding="0" cellspacing="0" border="0" width="100%">
+            
+
+                <tr>
+            <td bgcolor="#f0f0f0" width=20% valign=top>
+                <b>Attachments:</b>
+            </td>
+            <td bgcolor="#ffffff" valign="top">
+                                    <img src="https://lawfully-dev.atlassian.net/images/icons/attach/image.gif" height="16" width="16" border="0" alt="PNG File">
+                    image-20250626-192501.png &nbsp;&nbsp;&nbsp;
+                            </td>
+        </tr>
+        
+    
+
+
+    
+                        <tr>
+                <td bgcolor="#f0f0f0" width="20%" valign="top"><b>Rank:</b></td>
+                <td id="customfield_10011-18229-value" class="value" bgcolor="#ffffff" width="80%">      0|i00vwt:
+  </td>
+            </tr>
+            </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Description</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td id="descriptionArea">
+            <p><ins><b>Objective</b></ins></p>
+
+<p>Users can set up periodic 'No Update' notifications to keep end users informed, even when there is no new progress.</p>
+
+<p> </p>
+
+<p><ins><b>Product Requirement</b></ins></p>
+
+<ul>
+	<li>A new toggle option will be introduced under Auto-Notify Applicant to give users more flexibility in managing case communications. (<em>Note: The existing text “Client Portal link will be sent via email.” will remain unchanged.</em>)
+	<ul>
+		<li>Toggle 1: Status Update (Current Option)
+		<ul>
+			<li>Automatically notifies applicants when there is a case status change.</li>
+			<li><font color="#bf2600">Change required: This is currently set at the applicant level but should be at the case level.</font></li>
+		</ul>
+		</li>
+		<li>Toggle 2: Periodic Update for No Status Change (New Option)
+		<ul>
+			<li>Sends periodic updates to applicants even when there is no change in case status, helping reduce uncertainty and improve transparency.</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li>When users enable the “Periodic Update for No Status Change” option, a modal will automatically appear, allowing them to configure how often and when the notifications should be sent.
+	<ul>
+		<li>Modal Title
+		<ul>
+			<li>Configure Periodic No-Update
+			<ul>
+				<li>Select the day to automatically notify applicants when there is no status update. Emails will be sent at 12:00 PM EST on the selected day.</li>
+			</ul>
+			</li>
+		</ul>
+		</li>
+		<li>Settings Interface
+		<ul>
+			<li>Week
+			<ul>
+				<li>Every<br/>
+<span class="error">&#91;text field for number&#93;</span><br/>
+<span class="error">&#91;dropdown: Week(s), Month(s)&#93;</span></li>
+				<li>on<br/>
+<span class="error">&#91;dropdown: Monday – Sunday&#93;</span></li>
+			</ul>
+			</li>
+			<li>Month
+			<ul>
+				<li>Every<br/>
+<span class="error">&#91;text field for number&#93;</span><br/>
+<span class="error">&#91;dropdown: Week(s), Month(s)&#93;</span></li>
+				<li>on<br/>
+<span class="error">&#91;dropdown: First, Second, Third, Fourth, Last&#93;</span><br/>
+<span class="error">&#91;dropdown: Monday – Sunday&#93;</span></li>
+			</ul>
+			</li>
+		</ul>
+		</li>
+		<li>Toggle for Apply this configuration to all existing <span class="error">&#91;case type&#93;</span> cases<br/>
+Info message: It will replace any existing No Update configuration for <span class="error">&#91;case type&#93;</span>.</li>
+		<li>Info Message
+		<ul>
+			<li>Periodic No status updates will automatically stop when the case reaches isEND (e.g., Approved, Denied, Rejected) or when the case is deactivated.</li>
+		</ul>
+		</li>
+		<li>Cancel / Save
+		<ul>
+			<li><font color="#bf2600"><del>There should be an option to save this configuration either for this case only, or for all cases under this applicant, or for all the same case types under every applicant. (시간 설정과 이 옵션 선택 한 화면에)</del></font></li>
+			<li><font color="#bf2600">After saving, users can see the set configuration with Edit</font></li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li>Additional Logic
+	<ul>
+		<li>The template for the “No Status Update” email notification is configured within Brevo (<a href="https://my.brevo.com/camp/template/219/message-setup" class="external-link" rel="nofollow noreferrer">Link</a>).</li>
+		<li>Skip Logic for Case Updates: If a case update occurs before the scheduled notification day, the “No Status Change” notification will be skipped for that cycle. However, the counter will reset, and the notification will be sent on the following scheduled day if no further updates occur.</li>
+		<li><del>Toggle Behavior: If users turn the setting off and then back on,</del> <font color="#bf2600"><del>초기화</del></font></li>
+		<li><del>Applicant-Level Configuration: The periodic update setting is applied at the applicant level, meaning all cases under the same applicant will follow the same configuration.</del></li>
+		<li>Additional Requirement
+		<ul>
+			<li>In Settings page, there must be an option to turn on “Auto notify applicants for all case updates by default” under General section. When turned on, this setting will automatically apply to every new case added, ensuring applicants are notified of any status changes without manual configuration.</li>
+			<li>Out of Scope
+			<ul>
+				<li>Turning on/off case status for all cases.</li>
+				<li>Setting for Periodic Update for No Status Change in Settings page.</li>
+			</ul>
+			</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+</ul>
+
+            <br/>
+        </td>
+    </tr>
+    </table>
+
+    <br/>
+
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" align="center">
+    <tr>
+        <td bgcolor="#bbbbbb" width="1%" nowrap align="center">
+            &nbsp;<font color="#ffffff"><b>Comments</b></font>&nbsp;
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" border="0" width="100%" class="grid" style="margin: 0;">
+                <tr id="comment-header-17047"><td bgcolor="#f0f0f0">
+            Comment by  
+                                                    
+                
+        
+            <a class="user-hover" rel="712020:618300d1-111b-400c-868d-e68604b44fba"
+                id="word_commented_712020:618300d1-111b-400c-868d-e68604b44fba"
+                href="https://lawfully-dev.atlassian.net/secure/ViewProfile.jspa?accountId=712020%3A618300d1-111b-400c-868d-e68604b44fba">
+                    Jae Lee
+                </a>
+
+                                        <font size="-2">
+            [
+                <font color="#336699">26/Jun/25</font>
+
+                            ]
+            </font>
+
+        </td></tr>
+        <tr id="comment-body-17047"><td bgcolor="#ffffff">
+            <p><a href="https://lawfully-dev.atlassian.net/secure/ViewProfile.jspa?accountId=607cdbbba41c7a0078260f35" class="user-hover" rel="607cdbbba41c7a0078260f35" data-account-id="607cdbbba41c7a0078260f35" accountid="607cdbbba41c7a0078260f35" rel="noreferrer">jintae.lim</a> 진태님, 요기에 “Update 딱히 없다” 에 맞는 디자인 하나 부탁 드립니다. 음, 가이드를 잘 드리고 싶으나, 많이 애매모호한 점 양해 부탁 드립니다 ㅠ. 아래 이미지는 “업데이트가 있어!” 인거고 새로운 디자인은 “업데이트가 없어!” 입니당 ㅎㅎㅎ</p>
+
+
+<p><span class="image-wrap" style=""><img src="/rest/api/3/attachment/content/12346" alt="image-20250626-192501.png" width="33.333333333333336%" style="border: 0px solid black" /></span></p>
+        </td></tr>
+            </table>
+Generated at Thu Jul 03 02:10:44 UTC 2025 by Jae Lee using Jira 1001.0.0-SNAPSHOT#100286-rev:954e9e452cb84460b72a974aab214235167cd4a5.
+
+</body>
+</html>
