@@ -7,10 +7,15 @@ const pdf = require('pdf-parse');
 const mammoth = require('mammoth');
 const OpenAI = require('openai');
 const { v4: uuidv4 } = require('uuid');
-require('dotenv').config({ path: '../.env' });
+// Try to load .env file, but don't fail if it doesn't exist
+try {
+  require('dotenv').config({ path: '../.env' });
+} catch (error) {
+  console.log('No .env file found, using default configuration');
+}
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = 5001; // Force port 5001
 
 // Middleware
 app.use(cors());
