@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -17,11 +18,23 @@ module.exports = {
           700: '#1d4ed8',
           800: '#1e40af',
           900: '#1e3a8a',
-        }
+        },
+        darkbg: {
+          900: '#111111',
+          800: '#181818',
+          700: '#232323',
+          600: '#2d2d2d',
+          500: '#3a3a3a',
+        },
+        accent: {
+          blue: '#3b82f6',
+          gray: '#6b7280',
+        },
       },
-      animation: {
-        'bounce': 'bounce 1s infinite',
-      }
+      boxShadow: {},
+      backdropBlur: {
+        xs: '2px',
+      },
     },
   },
   plugins: [],

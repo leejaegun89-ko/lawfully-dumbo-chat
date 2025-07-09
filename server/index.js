@@ -91,10 +91,90 @@ const logoUpload = multer({
   }
 });
 
+// Get current logo
+app.get('/api/logo', (req, res) => {
+  const uploadDir = path.join(__dirname, 'uploads');
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
+  
+  try {
+    // Check if uploads directory exists
+    if (!fs.existsSync(uploadDir)) {
+      return res.json({ logoUrl: null });
+    }
+    
+    // Look for logo files with any supported extension
+    const files = fs.readdirSync(uploadDir);
+    const logoFiles = files.filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return file.startsWith('logo') && allowedExtensions.includes(ext);
+    });
+    
+    if (logoFiles.length === 0) {
+      return res.json({ logoUrl: null });
+    }
+    
+    // Get the most recently uploaded logo by checking file modification times
+    let mostRecentLogo = logoFiles[0];
+    let mostRecentTime = fs.statSync(path.join(uploadDir, mostRecentLogo)).mtime.getTime();
+    
+    console.log(`Found ${logoFiles.length} logo files:`, logoFiles);
+    
+    for (const file of logoFiles) {
+      const filePath = path.join(uploadDir, file);
+      const stats = fs.statSync(filePath);
+      const fileTime = stats.mtime.getTime();
+      
+      console.log(`Logo file: ${file}, modified: ${new Date(fileTime).toISOString()}`);
+      
+      if (fileTime > mostRecentTime) {
+        mostRecentTime = fileTime;
+        mostRecentLogo = file;
+      }
+    }
+    
+    console.log(`Selected most recent logo: ${mostRecentLogo}`);
+    res.json({ logoUrl: `/uploads/${mostRecentLogo}` });
+  } catch (error) {
+    console.error('Error getting logo:', error);
+    res.status(500).json({ error: 'Failed to get logo' });
+  }
+});
+
 app.post('/api/logo', logoUpload.single('logo'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
+  
+  console.log(`Logo uploaded: ${req.file.filename}`);
+  
+  // Clean up old logo files
+  const uploadDir = path.join(__dirname, 'uploads');
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
+  
+  try {
+    if (fs.existsSync(uploadDir)) {
+      const files = fs.readdirSync(uploadDir);
+      let deletedCount = 0;
+      
+      files.forEach(file => {
+        const ext = path.extname(file).toLowerCase();
+        if (file.startsWith('logo') && allowedExtensions.includes(ext) && file !== req.file.filename) {
+          try {
+            fs.unlinkSync(path.join(uploadDir, file));
+            console.log(`Deleted old logo: ${file}`);
+            deletedCount++;
+          } catch (unlinkError) {
+            console.error(`Failed to delete old logo ${file}:`, unlinkError);
+          }
+        }
+      });
+      
+      console.log(`Cleaned up ${deletedCount} old logo files`);
+    }
+  } catch (error) {
+    console.error('Error cleaning up old logos:', error);
+  }
+  
   // Return the static URL for the uploaded logo
   const logoUrl = `/uploads/${req.file.filename}`;
   res.json({ url: logoUrl });
@@ -291,7 +371,16 @@ app.post('/api/chat', async (req, res) => {
     // Create system message with document context
     const systemMessage = {
       role: 'system',
-      content: `You are Dumbo, a helpful AI assistant. You have access to the following documents that have been uploaded by the admin. Use this information to answer questions accurately and helpfully. If the information is not available in the documents, say so clearly.
+      content: `You are Dumbo, a helpful AI assistant. You have access to documents uploaded by the admin and should use them to answer questions accurately and helpfully. 
+      Do not mention the documents as your source. If you cannot find the answer, respond with a helpful message, and if you say contact support, provide the support email: help@lawfully.com. 
+      Never say that the information is unavailable or not included in the documents.
+      When answering, never add **.
+      
+
+
+
+      
+
 
 Documents:
 ${documentContext}
@@ -351,6 +440,70 @@ app.post('/api/share', (req, res) => {
     shareId: shareId,
     shareUrl: `/chat/${shareId}`
   });
+});
+
+const FEEDBACK_FILE = path.join(__dirname, 'feedback.json');
+
+// Save feedback
+app.post('/api/feedback', express.json(), (req, res) => {
+  const { name, role, message } = req.body;
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  if (!role || typeof role !== 'string' || !role.trim()) {
+    return res.status(400).json({ error: 'Role is required' });
+  }
+  if (!message || typeof message !== 'string' || !message.trim()) {
+    return res.status(400).json({ error: 'Feedback message is required' });
+  }
+  const feedback = {
+    id: uuidv4(),
+    name: name.trim(),
+    role: role.trim(),
+    message: message.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  let feedbacks = [];
+  try {
+    if (fs.existsSync(FEEDBACK_FILE)) {
+      feedbacks = JSON.parse(fs.readFileSync(FEEDBACK_FILE, 'utf-8'));
+    }
+    feedbacks.push(feedback);
+    fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(feedbacks, null, 2), 'utf-8');
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error saving feedback:', err);
+    res.status(500).json({ error: 'Failed to save feedback' });
+  }
+});
+
+// List feedbacks
+app.get('/api/feedback', (req, res) => {
+  try {
+    if (!fs.existsSync(FEEDBACK_FILE)) return res.json({ feedbacks: [] });
+    const feedbacks = JSON.parse(fs.readFileSync(FEEDBACK_FILE, 'utf-8'));
+    res.json({ feedbacks });
+  } catch (err) {
+    console.error('Error reading feedback:', err);
+    res.status(500).json({ error: 'Failed to read feedback' });
+  }
+});
+
+// Delete feedback by id
+app.delete('/api/feedback/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!fs.existsSync(FEEDBACK_FILE)) return res.status(404).json({ error: 'No feedback found' });
+    let feedbacks = JSON.parse(fs.readFileSync(FEEDBACK_FILE, 'utf-8'));
+    const prevLen = feedbacks.length;
+    feedbacks = feedbacks.filter(fb => fb.id !== id);
+    if (feedbacks.length === prevLen) return res.status(404).json({ error: 'Feedback not found' });
+    fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(feedbacks, null, 2), 'utf-8');
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting feedback:', err);
+    res.status(500).json({ error: 'Failed to delete feedback' });
+  }
 });
 
 // Serve React app for all other routes (only in production)

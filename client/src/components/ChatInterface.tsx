@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Send, User } from 'lucide-react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import { Send, User, RefreshCw } from 'lucide-react';
 import ElephantIcon from '../assets/elephant.svg';
 
 interface Message {
@@ -14,12 +14,25 @@ interface ChatInterfaceProps {
   logoUrl?: string | null;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl }) => {
+export interface ChatInterfaceRef {
+  refreshChat: () => void;
+}
+
+const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmin = false, logoUrl }, ref) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId, setSessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Expose refresh function to parent component
+  useImperativeHandle(ref, () => ({
+    refreshChat: () => {
+      setMessages([]);
+      setInputMessage('');
+      setSessionId(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+    }
+  }));
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -97,31 +110,44 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+      <div className="flex items-center justify-between p-4 border-b bg-darkbg-800/80 glass-card">
         <div className="flex items-center space-x-2">
-          <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-7 h-7 mr-1 inline-block align-middle rounded-full object-contain border" />
-          <h2 className="text-lg font-semibold text-gray-900">Dumbo</h2>
+          {/* <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-7 h-7 mr-1 inline-block align-middle rounded-full object-contain border border-accent-blue" /> */}
+          <h2 className="text-lg font-semibold text-accent-blue">Dumbo</h2>
           {isAdmin && (
-            <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+            <span className="px-2 py-1 text-xs bg-accent-blue/10 text-accent-blue rounded-full border border-accent-blue/30">
               Admin Mode
             </span>
           )}
         </div>
-        <div className="text-sm text-gray-500">
-          {messages.length > 0 && `${messages.length} messages`}
+        <div className="flex items-center space-x-3">
+          <div className="text-sm text-accent-blue">
+            {messages.length > 0 && `${messages.length} messages`}
+          </div>
+          <button
+            onClick={() => {
+              setMessages([]);
+              setInputMessage('');
+              setSessionId(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+            }}
+            className="p-2 rounded-lg bg-darkbg-700 hover:bg-darkbg-600 text-accent-blue transition-colors"
+            title="Refresh Chat"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-8">
-            <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-12 h-12 mx-auto mb-4 text-gray-300 rounded-full object-contain border" />
-            <p className="text-lg font-medium">Welcome to Dumbo!</p>
-            <p className="text-sm">
+          <div className="text-center text-accent-gray mt-8">
+            <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-12 h-12 mx-auto mb-4 text-accent-gray rounded-full object-contain border border-accent-blue" />
+            <p className="text-lg font-medium text-accent-blue">Welcome to Dumbo!</p>
+            <p className="text-sm text-accent-gray">
               {isAdmin 
                 ? "Upload documents and start chatting with me about their content."
-                : "Ask me anything about the documents I have access to."
+                : "Ask me anything about the product!"
               }
             </p>
           </div>
@@ -139,28 +165,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl 
                 <div
                   className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                     message.role === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                      ? 'bg-accent-blue text-white'
+                      : 'bg-darkbg-700 text-accent-blue border border-accent-blue'
                   }`}
                 >
                   {message.role === 'user' ? (
                     <User className="w-4 h-4" />
                   ) : (
-                    <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border" />
+                    <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
                   )}
                 </div>
                 <div
-                  className={`px-4 py-2 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-900'
-                  }`}
+                  className={`chat-bubble-${message.role === 'user' ? 'user' : 'ai'} max-w-full`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   <p
-                    className={`text-xs mt-1 ${
-                      message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-                    }`}
+                    className={`text-xs mt-1 text-accent-gray`}
                   >
                     {formatTime(message.timestamp)}
                   </p>
@@ -173,14 +193,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl 
         {isLoading && (
           <div className="flex justify-start">
             <div className="flex items-start space-x-2">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center">
-                <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border" />
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-darkbg-700 text-accent-blue flex items-center justify-center border border-accent-blue">
+                <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
               </div>
-              <div className="px-4 py-2 rounded-lg bg-gray-100">
+              <div className="chat-bubble-ai">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-accent-blue rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-accent-gray rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-accent-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -191,21 +211,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl 
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t bg-white">
+      <div className="p-4 border-t bg-darkbg-800/80 glass-card">
         <div className="flex space-x-2">
           <textarea
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 resize-none input-dark"
             rows={1}
             disabled={isLoading}
           />
           <button
             onClick={sendMessage}
             disabled={!inputMessage.trim() || isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="btn-main disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
             <Send className="w-4 h-4" />
           </button>
@@ -213,6 +233,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isAdmin = false, logoUrl 
       </div>
     </div>
   );
-};
+});
+
+ChatInterface.displayName = 'ChatInterface';
 
 export default ChatInterface; 

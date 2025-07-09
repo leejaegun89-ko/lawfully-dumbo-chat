@@ -2,58 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar */
+html {
+  font-family: 'Inter', 'Pretendard', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+body {
+  @apply bg-darkbg-900 text-white transition-colors duration-500;
+  background: #111;
+  min-height: 100vh;
+}
+
+.glass-card {
+  @apply bg-darkbg-800/80 backdrop-blur-xs rounded-2xl border border-darkbg-700;
+}
+
+.btn-main {
+  @apply bg-accent-blue text-white font-bold px-4 py-2 rounded-xl hover:bg-accent-blue/80 transition-all duration-200;
+  box-shadow: none;
+  border: none;
+}
+
+.input-dark {
+  @apply bg-darkbg-700 border-darkbg-600 text-white placeholder-accent-gray rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all duration-200;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #181818;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: #232323;
+  border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #3a3a3a;
 }
 
-/* Custom animations */
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+.chat-bubble-ai {
+  @apply bg-darkbg-700 text-white px-4 py-2 rounded-2xl mb-2 border border-accent-blue/30;
+  box-shadow: none;
+}
+.chat-bubble-user {
+  @apply bg-darkbg-600 text-white px-4 py-2 rounded-2xl mb-2 border border-darkbg-500/60;
+  box-shadow: none;
 }
 
-.animate-bounce {
-  animation: bounce 1s infinite;
+.btn-primary {
+  @apply bg-accent-blue text-white px-4 py-2 rounded-lg hover:bg-accent-blue/80 transition-colors font-bold;
+}
+.btn-secondary {
+  @apply bg-darkbg-700 text-white px-4 py-2 rounded-lg hover:bg-darkbg-600 transition-colors;
+}
+.input-field {
+  @apply input-dark;
 }
 
-/* Custom focus styles */
 .focus-ring:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
   box-shadow: 0 0 0 2px #3b82f6;
-}
-
-/* Custom button styles */
-.btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors;
-}
-
-/* Custom input styles */
-.input-field {
-  @apply border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
 } 

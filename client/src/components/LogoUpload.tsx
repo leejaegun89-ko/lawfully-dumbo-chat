@@ -12,20 +12,45 @@ const LogoUpload: React.FC<{ onUpload: (url: string) => void }> = ({ onUpload })
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please select a valid image file (PNG, JPEG, SVG, GIF, or WebP)');
+      return;
+    }
+    
+    // Validate file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('File size must be less than 2MB');
+      return;
+    }
+    
     setUploading(true);
     const formData = new FormData();
     formData.append('logo', file);
+    
     try {
       const res = await fetch('/api/logo', {
         method: 'POST',
         body: formData,
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || `Upload failed with status ${res.status}`);
+      }
+      
       const data = await res.json();
       if (data.url) {
+        console.log('Logo uploaded successfully:', data.url);
         onUpload(data.url);
+      } else {
+        throw new Error('No URL returned from server');
       }
     } catch (err) {
-      alert('Upload failed');
+      console.error('Logo upload error:', err);
+      alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
