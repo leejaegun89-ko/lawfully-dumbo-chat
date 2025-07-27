@@ -201,7 +201,7 @@ const AdminInterface: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const { logoUrl, refetchLogo, forceRefreshLogo } = useLogo();
+  const { logoUrl, refetchLogo } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
   const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
