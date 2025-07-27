@@ -201,7 +201,7 @@ const AdminInterface: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const { logoUrl, refetchLogo } = useLogo();
+  const { logoUrl, refetchLogo, forceRefreshLogo } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
   const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
@@ -249,8 +249,19 @@ const AdminInterface: React.FC = () => {
     console.log('Logo uploaded:', logoUrl);
     // 로고 업로드 후 즉시 새로고침하여 새로운 로고를 표시
     try {
+      // 약간의 지연을 두어 서버에서 파일이 완전히 저장되도록 함
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // 먼저 일반 새로고침 시도
       await refetchLogo();
       console.log('Logo refreshed successfully');
+      
+      // 추가로 강제 새로고침도 시도
+      setTimeout(async () => {
+        await forceRefreshLogo();
+        console.log('Logo force refreshed successfully');
+      }, 100);
+      
     } catch (error) {
       console.error('Failed to refresh logo:', error);
     }
