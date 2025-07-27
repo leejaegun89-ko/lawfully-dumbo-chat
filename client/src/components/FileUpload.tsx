@@ -60,7 +60,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     try {
       const formData = new FormData();
       validFiles.forEach(file => {
-        formData.append('documents', file);
+        formData.append('file', file);
       });
 
       const response = await fetch('/api/upload', {

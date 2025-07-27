@@ -42,11 +42,11 @@ const LogoUpload: React.FC<{ onUpload: (url: string) => void }> = ({ onUpload })
       }
       
       const data = await res.json();
-      if (data.url) {
-        console.log('Logo uploaded successfully:', data.url);
-        onUpload(data.url);
+      if (data.logoUrl) {
+        console.log('Logo uploaded successfully:', data.logoUrl);
+        onUpload(data.logoUrl);
       } else {
-        throw new Error('No URL returned from server');
+        throw new Error('No logo URL returned from server');
       }
     } catch (err) {
       console.error('Logo upload error:', err);
