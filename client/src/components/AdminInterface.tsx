@@ -249,18 +249,27 @@ const AdminInterface: React.FC = () => {
     console.log('Logo uploaded:', logoUrl);
     // 로고 업로드 후 즉시 새로고침하여 새로운 로고를 표시
     try {
-      // 약간의 지연을 두어 서버에서 파일이 완전히 저장되도록 함
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Vercel 환경에서는 로고 업로드가 임시이므로 즉시 새로고침
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // 먼저 일반 새로고침 시도
-      await refetchLogo();
-      console.log('Logo refreshed successfully');
+      // 로고 URL을 직접 설정하여 즉시 반영
+      if (logoUrl && logoUrl.includes('/api/logo-file')) {
+        const timestamp = Date.now();
+        const newLogoUrl = `${logoUrl}&t=${timestamp}`;
+        console.log('Setting new logo URL:', newLogoUrl);
+        // 강제로 상태 업데이트
+        setDocuments(prev => [...prev]); // 강제 리렌더링
+      }
       
-      // 추가로 강제 새로고침도 시도
+      // 추가로 API 새로고침도 시도
       setTimeout(async () => {
-        await forceRefreshLogo();
-        console.log('Logo force refreshed successfully');
-      }, 100);
+        try {
+          await refetchLogo();
+          console.log('Logo refreshed successfully');
+        } catch (error) {
+          console.log('Logo refresh failed, but continuing with direct URL');
+        }
+      }, 200);
       
     } catch (error) {
       console.error('Failed to refresh logo:', error);

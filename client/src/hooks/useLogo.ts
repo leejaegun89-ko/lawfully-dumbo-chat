@@ -48,7 +48,10 @@ export const useLogo = () => {
       }
     } catch (error) {
       console.error('Error fetching logo:', error);
-      setError(error instanceof Error ? error.message : 'Unknown error');
+      // Vercel 환경에서는 에러가 발생해도 기본 로고를 표시
+      console.log('Using fallback logo for Vercel environment');
+      setLogoUrl('/api/logo-file?id=default&ext=.png');
+      setError(null);
     } finally {
       setIsLoading(false);
     }

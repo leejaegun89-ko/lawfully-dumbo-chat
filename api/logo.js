@@ -9,6 +9,23 @@ export const config = {
 };
 
 module.exports = async (req, res) => {
+  // GET 요청 처리 - 로고 URL 반환
+  if (req.method === 'GET') {
+    try {
+      // Vercel 환경에서는 임시 로고 URL 반환
+      // 실제로는 데이터베이스나 파일 시스템에서 로고 정보를 가져와야 함
+      const logoUrl = '/api/logo-file?id=default&ext=.png';
+      
+      console.log('Logo GET request - returning:', logoUrl);
+      res.status(200).json({ logoUrl: logoUrl });
+    } catch (error) {
+      console.error('Error getting logo:', error);
+      res.status(500).json({ error: 'Failed to get logo' });
+    }
+    return;
+  }
+  
+  // POST 요청 처리 - 로고 업로드
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
