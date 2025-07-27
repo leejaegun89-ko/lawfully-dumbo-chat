@@ -201,7 +201,7 @@ const AdminInterface: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const { logoUrl } = useLogo();
+  const { logoUrl, refetchLogo } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
   const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
@@ -247,8 +247,13 @@ const AdminInterface: React.FC = () => {
   // 로고 업로드 핸들러
   const handleLogoUpload = async (logoUrl: string) => {
     console.log('Logo uploaded:', logoUrl);
-    // The logo URL will be automatically updated through the useLogo hook
-    // No need to manually refetch since the URL is passed directly
+    // 로고 업로드 후 즉시 새로고침하여 새로운 로고를 표시
+    try {
+      await refetchLogo();
+      console.log('Logo refreshed successfully');
+    } catch (error) {
+      console.error('Failed to refresh logo:', error);
+    }
   };
 
   // 챗 리프레시 핸들러

@@ -45,6 +45,8 @@ const LogoUpload: React.FC<{ onUpload: (url: string) => void }> = ({ onUpload })
       if (data.logoUrl) {
         console.log('Logo uploaded successfully:', data.logoUrl);
         onUpload(data.logoUrl);
+        // 성공 메시지 표시
+        alert('Logo uploaded successfully!');
       } else {
         throw new Error('No logo URL returned from server');
       }

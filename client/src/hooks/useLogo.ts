@@ -10,7 +10,14 @@ export const useLogo = () => {
     setError(null);
     
     try {
-      const response = await fetch('/api/logo');
+      // 캐시 버스팅을 위한 타임스탬프 추가
+      const response = await fetch(`/api/logo?t=${Date.now()}`, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -20,7 +27,11 @@ export const useLogo = () => {
       
       if (data.logoUrl) {
         console.log('Logo fetched successfully:', data.logoUrl);
-        setLogoUrl(data.logoUrl + '?' + Date.now()); // Add timestamp to bust cache
+        // 캐시 버스팅을 위한 타임스탬프 추가
+        const cacheBustingUrl = data.logoUrl.includes('?') 
+          ? `${data.logoUrl}&t=${Date.now()}` 
+          : `${data.logoUrl}?t=${Date.now()}`;
+        setLogoUrl(cacheBustingUrl);
       } else {
         console.log('No logo found on server');
         setLogoUrl(null);
