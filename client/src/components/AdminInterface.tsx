@@ -245,9 +245,10 @@ const AdminInterface: React.FC = () => {
   };
 
   // 로고 업로드 핸들러
-  const handleLogoUpload = async () => {
-    // Fetch the updated logo from server
-    await refetchLogo();
+  const handleLogoUpload = async (logoUrl: string) => {
+    console.log('Logo uploaded:', logoUrl);
+    // The logo URL will be automatically updated through the useLogo hook
+    // No need to manually refetch since the URL is passed directly
   };
 
   // 챗 리프레시 핸들러
