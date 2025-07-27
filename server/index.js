@@ -177,7 +177,7 @@ app.post('/api/logo', logoUpload.single('logo'), (req, res) => {
   
   // Return the static URL for the uploaded logo
   const logoUrl = `/uploads/${req.file.filename}`;
-  res.json({ url: logoUrl });
+  res.json({ logoUrl: logoUrl });
 });
 
 // Serve uploads statically (no cache)
@@ -239,7 +239,7 @@ async function parseDocument(filePath, fileType) {
 // Routes
 
 // Upload documents
-app.post('/api/upload', upload.array('documents', 10), async (req, res) => {
+app.post('/api/upload', upload.array('file', 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
