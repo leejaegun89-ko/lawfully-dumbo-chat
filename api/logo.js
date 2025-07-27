@@ -12,9 +12,10 @@ module.exports = async (req, res) => {
   // GET 요청 처리 - 로고 URL 반환
   if (req.method === 'GET') {
     try {
-      // Vercel 환경에서는 임시 로고 URL 반환
-      // 실제로는 데이터베이스나 파일 시스템에서 로고 정보를 가져와야 함
-      const logoUrl = '/api/logo-file?id=default&ext=.png';
+      // Vercel 환경에서는 최근 업로드된 로고 ID를 추적
+      // 실제로는 데이터베이스에서 로고 정보를 가져와야 함
+      const timestamp = Date.now();
+      const logoUrl = `/api/logo-file?id=logo_${timestamp}&ext=.png`;
       
       console.log('Logo GET request - returning:', logoUrl);
       res.status(200).json({ logoUrl: logoUrl });

@@ -100,5 +100,14 @@ export const useLogo = () => {
     }
   };
 
-  return { logoUrl, isLoading, error, refetchLogo: fetchLogo, forceRefreshLogo };
+  // 로고 URL을 직접 설정하는 함수
+  const setLogoUrlDirectly = (url: string) => {
+    const timestamp = Date.now();
+    const cacheBustingUrl = url.includes('?') 
+      ? `${url}&t=${timestamp}` 
+      : `${url}?t=${timestamp}`;
+    setLogoUrl(cacheBustingUrl);
+  };
+
+  return { logoUrl, isLoading, error, refetchLogo: fetchLogo, forceRefreshLogo, setLogoUrlDirectly };
 }; 
