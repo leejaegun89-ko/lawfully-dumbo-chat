@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ChatInterface, { ChatInterfaceRef } from './ChatInterface';
-import ElephantIcon from '../assets/elephant.svg';
+import ImmigrationChat, { ImmigrationChatRef } from './ImmigrationChat';
+import ElephantIcon from './ElephantIcon';
 import { useLogo } from '../hooks/useLogo';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, FileText, Globe } from 'lucide-react';
 
 // Feedback Modal
 function FeedbackModal({ open, onClose }: { open: boolean; onClose: (submitted: boolean) => void }) {
@@ -121,11 +122,17 @@ const SharedChat: React.FC = () => {
   const { shareId } = useParams<{ shareId: string }>();
   const { logoUrl } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
+  const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
+  const [activeChatMode, setActiveChatMode] = useState<'document' | 'immigration' | 'beyond'>('document');
 
   // 챗 리프레시 핸들러
   const handleChatRefresh = () => {
-    chatRef.current?.refreshChat();
+    if (activeChatMode === 'document') {
+      chatRef.current?.refreshChat();
+    } else {
+      immigrationChatRef.current?.refreshChat();
+    }
   };
 
   return (
@@ -135,7 +142,11 @@ const SharedChat: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-7 h-7 mr-2 inline-block align-middle rounded-full object-contain border border-accent-blue" />
+              {logoUrl ? (
+                <img src={logoUrl} alt="Dumbo" className="w-7 h-7 mr-2 inline-block align-middle rounded-full object-contain border border-accent-blue" />
+              ) : (
+                <ElephantIcon className="w-7 h-7 mr-2 inline-block align-middle" />
+              )}
               <h1 className="text-2xl font-bold text-accent-blue">Lawfully Dumbo</h1>
               <span className="ml-2 px-2 py-1 text-xs bg-accent-blue/10 text-accent-blue rounded-full border border-accent-blue/30">
                 Shared Chat
@@ -167,7 +178,51 @@ const SharedChat: React.FC = () => {
       {/* Chat Interface */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="glass-card h-[calc(100vh-200px)]">
-          <ChatInterface ref={chatRef} isAdmin={false} logoUrl={logoUrl} />
+          {/* Chat Mode Tabs */}
+          <div className="flex border-b border-darkbg-700 bg-darkbg-800/60">
+            <button
+              onClick={() => setActiveChatMode('document')}
+              className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                activeChatMode === 'document'
+                  ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                  : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>About Lawfully Pro</span>
+            </button>
+            <button
+              onClick={() => setActiveChatMode('immigration')}
+              className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                activeChatMode === 'immigration'
+                  ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                  : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+              }`}
+            >
+              <Globe className="w-4 h-4" />
+              <span>Immigration Assistant</span>
+            </button>
+            <button
+              onClick={() => setActiveChatMode('beyond')}
+              className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                activeChatMode === 'beyond'
+                  ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                  : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+              }`}
+            >
+              <Globe className="w-4 h-4" />
+              <span>Beyond Immigration</span>
+            </button>
+          </div>
+          
+          {/* Chat Interface */}
+          {activeChatMode === 'immigration' ? (
+            <ImmigrationChat key="immigration" ref={immigrationChatRef} isAdmin={false} logoUrl={logoUrl} initialTab="general" />
+          ) : activeChatMode === 'beyond' ? (
+            <ImmigrationChat key="beyond" ref={immigrationChatRef} isAdmin={false} logoUrl={logoUrl} initialTab="beyond" />
+          ) : (
+            <ChatInterface ref={chatRef} isAdmin={false} logoUrl={logoUrl} />
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 # Lawfully Dumbo
 
-A document-based AI chatbot application with admin interface and shareable chat URLs. Upload documents and chat with Dumbo about their content!
+A comprehensive AI chatbot application specializing in immigration law and document analysis. Features both immigration assistance and document-based chat capabilities with admin interface and shareable chat URLs.
 
 ## Features
 
@@ -8,9 +8,15 @@ A document-based AI chatbot application with admin interface and shareable chat 
 - **File Upload Section**: Drag & drop or browse to upload multiple documents
 - **Supported Formats**: PDF, DOC, DOCX, TXT files (up to 10MB each)
 - **Document Management**: View uploaded files with timestamps and file types
-- **Persistent Chat Interface**: Always visible on the right side
+- **Dual Chat Interface**: Switch between Immigration Assistant and Document Chat
 
-### 🤖 Dumbo Chatbot
+### 🤖 Immigration Assistant
+- **General Immigration**: Comprehensive list of immigration case types with expert guidance
+- **Case Type Categories**: Family-based, Employment-based, Humanitarian, Student programs, and more
+- **Specialized Knowledge**: Expert information on eligibility, requirements, processes, and recent changes
+- **Beyond Immigration**: General legal assistance beyond immigration law
+
+### 📄 About Lawfully Pro
 - **AI-Powered Responses**: Uses OpenAI GPT-3.5-turbo for intelligent responses
 - **Document Context**: Answers questions based on uploaded document content
 - **Session Management**: Maintains chat history per session
@@ -94,19 +100,25 @@ A document-based AI chatbot application with admin interface and shareable chat 
 
 ## Usage
 
-### Admin Interface (http://localhost:5000)
+### Admin Interface (http://localhost:5001)
 
 1. **Upload Documents**
    - Drag and drop files or click "browse"
    - Supported formats: PDF, DOC, DOCX, TXT
    - Files are automatically parsed and stored
 
-2. **Chat with Dumbo**
-   - The chat interface is always visible on the right
+2. **Immigration Assistant**
+   - Switch to "Immigration Assistant" tab
+   - Select from comprehensive immigration case types
+   - Get expert guidance on eligibility, requirements, and processes
+   - Ask questions about specific case types or general immigration topics
+
+3. **About Lawfully Pro**
+   - Switch to "About Lawfully Pro" tab
    - Ask questions about your uploaded documents
    - Dumbo will respond based on the document content
 
-3. **Generate Shareable URL**
+4. **Generate Shareable URL**
    - Click "Share Chat" button
    - Copy the generated URL
    - Share with others to let them chat with Dumbo
@@ -114,9 +126,10 @@ A document-based AI chatbot application with admin interface and shareable chat 
 ### Public Chat Interface
 
 - Access via generated shareable URLs (e.g., `/chat/abc123`)
-- Clean interface with only the chat functionality
+- Clean interface with About Lawfully Pro, Immigration Assistant, and Beyond Immigration tabs
 - Same document knowledge base as admin interface
 - No file upload or management features
+- Full access to immigration case types and expert guidance
 
 ## API Endpoints
 

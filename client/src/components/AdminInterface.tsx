@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import FileUpload from './FileUpload';
 import ChatInterface, { ChatInterfaceRef } from './ChatInterface';
+import ImmigrationChat, { ImmigrationChatRef } from './ImmigrationChat';
 import DocumentList from './DocumentList';
-import { Share, RefreshCw } from 'lucide-react';
-import ElephantIcon from '../assets/elephant.svg';
+import { Share, RefreshCw, FileText, Globe } from 'lucide-react';
+import ElephantIcon from './ElephantIcon';
 import LogoUpload from './LogoUpload';
 import { useLogo } from '../hooks/useLogo';
 
@@ -202,7 +203,9 @@ const AdminInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { logoUrl, refetchLogo } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
+  const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
+  const [activeChatMode, setActiveChatMode] = useState<'document' | 'immigration' | 'beyond'>('document');
 
   const fetchDocuments = async () => {
     try {
@@ -249,7 +252,11 @@ const AdminInterface: React.FC = () => {
 
   // 챗 리프레시 핸들러
   const handleChatRefresh = () => {
-    chatRef.current?.refreshChat();
+    if (activeChatMode === 'document') {
+      chatRef.current?.refreshChat();
+    } else {
+      immigrationChatRef.current?.refreshChat();
+    }
   };
 
   return (
@@ -262,7 +269,7 @@ const AdminInterface: React.FC = () => {
               {logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-7 h-7 mr-2 inline-block align-middle rounded-full object-contain border border-accent-blue" />
               ) : (
-                <img src={ElephantIcon} alt="Dumbo" className="w-7 h-7 mr-2 inline-block align-middle" />
+                <ElephantIcon className="w-7 h-7 mr-2 inline-block align-middle" />
               )}
               <h1 className="text-2xl font-bold text-accent-blue">Lawfully Dumbo</h1>
               <span className="ml-2 px-2 py-1 text-xs bg-accent-blue/10 text-accent-blue rounded-full border border-accent-blue/30">
@@ -328,7 +335,51 @@ const AdminInterface: React.FC = () => {
           {/* Right Panel - Chat Interface */}
           <div className="lg:col-span-2">
             <div className="glass-card h-[calc(100vh-200px)]">
-              <ChatInterface ref={chatRef} isAdmin={true} logoUrl={logoUrl} />
+              {/* Chat Mode Tabs */}
+              <div className="flex border-b border-darkbg-700 bg-darkbg-800/60">
+                <button
+                  onClick={() => setActiveChatMode('document')}
+                  className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                    activeChatMode === 'document'
+                      ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                      : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+                  }`}
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>About Lawfully Pro</span>
+                </button>
+                <button
+                  onClick={() => setActiveChatMode('immigration')}
+                  className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                    activeChatMode === 'immigration'
+                      ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                      : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+                  }`}
+                >
+                  <Globe className="w-4 h-4" />
+                  <span>Immigration Assistant</span>
+                </button>
+                <button
+                  onClick={() => setActiveChatMode('beyond')}
+                  className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium transition-colors ${
+                    activeChatMode === 'beyond'
+                      ? 'text-accent-blue border-b-2 border-accent-blue bg-darkbg-700/50'
+                      : 'text-accent-gray hover:text-accent-blue hover:bg-darkbg-700/30'
+                  }`}
+                >
+                  <Globe className="w-4 h-4" />
+                  <span>Beyond Immigration</span>
+                </button>
+              </div>
+              
+                        {/* Chat Interface */}
+          {activeChatMode === 'immigration' ? (
+            <ImmigrationChat key="immigration" ref={immigrationChatRef} isAdmin={true} logoUrl={logoUrl} initialTab="general" />
+          ) : activeChatMode === 'beyond' ? (
+            <ImmigrationChat key="beyond" ref={immigrationChatRef} isAdmin={true} logoUrl={logoUrl} initialTab="beyond" />
+          ) : (
+            <ChatInterface ref={chatRef} isAdmin={true} logoUrl={logoUrl} />
+          )}
             </div>
           </div>
         </div>

@@ -5,17 +5,25 @@
   "main": "server/index.js",
   "scripts": {
     "predev": "lsof -ti:3000,5001 | xargs kill -9 || true",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm run dev",
+    "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue.bold,green.bold\" --prefix \"[{name}]\" --names \"SERVER,CLIENT\" \"npm run server\" \"npm run client\"",
+    "server": "cd server && PORT=5001 npm run dev",
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "prepare": "cd client && npm install"
+    "prepare": "cd client && npm install",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d client/build"
   },
-  "keywords": ["chatbot", "document-qa", "openai", "react"],
+  "keywords": [
+    "chatbot",
+    "document-qa",
+    "openai",
+    "react"
+  ],
   "author": "Lawfully Dumbo",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "gh-pages": "^6.3.0"
   }
-} 
+}

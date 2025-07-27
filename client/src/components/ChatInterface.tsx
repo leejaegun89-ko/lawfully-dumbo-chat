@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Send, User, RefreshCw } from 'lucide-react';
-import ElephantIcon from '../assets/elephant.svg';
+import ElephantIcon from './ElephantIcon';
 
 interface Message {
   id: string;
@@ -142,12 +142,16 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center text-accent-gray mt-8">
-            <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-12 h-12 mx-auto mb-4 text-accent-gray rounded-full object-contain border border-accent-blue" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="Dumbo" className="w-12 h-12 mx-auto mb-4 text-accent-gray rounded-full object-contain border border-accent-blue" />
+            ) : (
+              <ElephantIcon className="w-12 h-12 mx-auto mb-4 text-accent-gray" />
+            )}
             <p className="text-lg font-medium text-accent-blue">Welcome to Dumbo!</p>
             <p className="text-sm text-accent-gray">
               {isAdmin 
                 ? "Upload documents and start chatting with me about their content."
-                : "Ask me anything about the product!"
+                : "Don't bother product team - Figure it out yourself by asking me anything about the product."
               }
             </p>
           </div>
@@ -172,7 +176,11 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
                   {message.role === 'user' ? (
                     <User className="w-4 h-4" />
                   ) : (
-                    <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
+                    logoUrl ? (
+                      <img src={logoUrl} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
+                    ) : (
+                      <ElephantIcon className="w-4 h-4" />
+                    )
                   )}
                 </div>
                 <div
@@ -194,7 +202,11 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
           <div className="flex justify-start">
             <div className="flex items-start space-x-2">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-darkbg-700 text-accent-blue flex items-center justify-center border border-accent-blue">
-                <img src={logoUrl || ElephantIcon} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Dumbo" className="w-4 h-4 rounded-full object-contain border border-accent-blue" />
+                ) : (
+                  <ElephantIcon className="w-4 h-4" />
+                )}
               </div>
               <div className="chat-bubble-ai">
                 <div className="flex space-x-1">
