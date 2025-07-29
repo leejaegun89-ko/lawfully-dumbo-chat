@@ -33,22 +33,13 @@ console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY);
 let uploadedDocuments = [];
 let chatSessions = {};
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
+// In-memory file storage for Vercel deployment
+let inMemoryFiles = new Map();
+let inMemoryLogo = null;
 
+// Configure multer for file uploads (memory storage for Vercel)
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['.pdf', '.docx', '.txt'];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -63,20 +54,9 @@ const upload = multer({
   }
 });
 
-// Logo upload endpoint
+// Logo upload endpoint (memory storage for Vercel)
 const logoUpload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      const uploadDir = path.join(__dirname, 'uploads');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-      cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-      cb(null, 'logo' + path.extname(file.originalname));
-    }
-  }),
+  storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -91,49 +71,14 @@ const logoUpload = multer({
   }
 });
 
-// Get current logo
+// Get current logo (memory-based for Vercel)
 app.get('/api/logo', (req, res) => {
-  const uploadDir = path.join(__dirname, 'uploads');
-  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
-  
   try {
-    // Check if uploads directory exists
-    if (!fs.existsSync(uploadDir)) {
-      return res.json({ logoUrl: null });
+    if (inMemoryLogo) {
+      res.json({ logoUrl: inMemoryLogo });
+    } else {
+      res.json({ logoUrl: null });
     }
-    
-    // Look for logo files with any supported extension
-    const files = fs.readdirSync(uploadDir);
-    const logoFiles = files.filter(file => {
-      const ext = path.extname(file).toLowerCase();
-      return file.startsWith('logo') && allowedExtensions.includes(ext);
-    });
-    
-    if (logoFiles.length === 0) {
-      return res.json({ logoUrl: null });
-    }
-    
-    // Get the most recently uploaded logo by checking file modification times
-    let mostRecentLogo = logoFiles[0];
-    let mostRecentTime = fs.statSync(path.join(uploadDir, mostRecentLogo)).mtime.getTime();
-    
-    console.log(`Found ${logoFiles.length} logo files:`, logoFiles);
-    
-    for (const file of logoFiles) {
-      const filePath = path.join(uploadDir, file);
-      const stats = fs.statSync(filePath);
-      const fileTime = stats.mtime.getTime();
-      
-      console.log(`Logo file: ${file}, modified: ${new Date(fileTime).toISOString()}`);
-      
-      if (fileTime > mostRecentTime) {
-        mostRecentTime = fileTime;
-        mostRecentLogo = file;
-      }
-    }
-    
-    console.log(`Selected most recent logo: ${mostRecentLogo}`);
-    res.json({ logoUrl: `/uploads/${mostRecentLogo}` });
   } catch (error) {
     console.error('Error getting logo:', error);
     res.status(500).json({ error: 'Failed to get logo' });
@@ -145,50 +90,27 @@ app.post('/api/logo', logoUpload.single('logo'), (req, res) => {
     return res.status(400).json({ error: 'No file uploaded' });
   }
   
-  console.log(`Logo uploaded: ${req.file.filename}`);
-  
-  // Clean up old logo files
-  const uploadDir = path.join(__dirname, 'uploads');
-  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
+  console.log(`Logo uploaded: ${req.file.originalname}`);
   
   try {
-    if (fs.existsSync(uploadDir)) {
-      const files = fs.readdirSync(uploadDir);
-      let deletedCount = 0;
-      
-      files.forEach(file => {
-        const ext = path.extname(file).toLowerCase();
-        if (file.startsWith('logo') && allowedExtensions.includes(ext) && file !== req.file.filename) {
-          try {
-            fs.unlinkSync(path.join(uploadDir, file));
-            console.log(`Deleted old logo: ${file}`);
-            deletedCount++;
-          } catch (unlinkError) {
-            console.error(`Failed to delete old logo ${file}:`, unlinkError);
-          }
-        }
-      });
-      
-      console.log(`Cleaned up ${deletedCount} old logo files`);
-    }
+    // Convert file buffer to base64 for in-memory storage
+    const base64Data = req.file.buffer.toString('base64');
+    const mimeType = req.file.mimetype;
+    const logoUrl = `data:${mimeType};base64,${base64Data}`;
+    
+    // Store in memory
+    inMemoryLogo = logoUrl;
+    
+    console.log(`Logo stored in memory: ${req.file.originalname}`);
+    res.json({ logoUrl: logoUrl });
   } catch (error) {
-    console.error('Error cleaning up old logos:', error);
+    console.error('Error processing logo:', error);
+    res.status(500).json({ error: 'Failed to process logo' });
   }
-  
-  // Return the static URL for the uploaded logo
-  const logoUrl = `/uploads/${req.file.filename}`;
-  res.json({ logoUrl: logoUrl });
 });
 
-// Serve uploads statically (no cache)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  setHeaders: (res, path) => {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('Expires', '0');
-    res.set('Surrogate-Control', 'no-store');
-  }
-}));
+// Note: Static file serving removed for Vercel deployment
+// Files are now stored in memory as base64 data URLs
 
 // Parse document content based on file type
 async function parseDocument(filePath, fileType) {
@@ -236,9 +158,53 @@ async function parseDocument(filePath, fileType) {
   }
 }
 
+// Parse document content from buffer (for Vercel deployment)
+async function parseDocumentFromBuffer(fileBuffer, fileType) {
+  try {
+    switch (fileType) {
+      case '.pdf':
+        try {
+          const pdfData = await pdf(fileBuffer);
+          return pdfData.text || 'PDF content could not be extracted';
+        } catch (pdfError) {
+          console.error('PDF parsing error:', pdfError);
+          throw new Error('Failed to parse PDF file. Please ensure it is a valid PDF.');
+        }
+      
+      case '.docx':
+        try {
+          const result = await mammoth.extractRawText({ buffer: fileBuffer });
+          return result.value || 'DOCX content could not be extracted';
+        } catch (mammothError) {
+          console.error('DOCX parsing error:', mammothError);
+          throw new Error('Failed to parse DOCX file. Please ensure it is a valid DOCX document.');
+        }
+      
+      case '.doc':
+        // DOC files are not supported by mammoth, return error message
+        throw new Error('DOC files are not supported. Please convert to DOCX or PDF format.');
+      
+      case '.txt':
+        try {
+          const content = fileBuffer.toString('utf-8');
+          return content || 'TXT file appears to be empty';
+        } catch (txtError) {
+          console.error('TXT parsing error:', txtError);
+          throw new Error('Failed to read TXT file.');
+        }
+      
+      default:
+        throw new Error(`Unsupported file type: ${fileType}`);
+    }
+  } catch (error) {
+    console.error('Error parsing document from buffer:', error);
+    throw error;
+  }
+}
+
 // Routes
 
-// Upload documents
+// Upload documents (memory-based for Vercel)
 app.post('/api/upload', upload.array('file', 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -253,7 +219,8 @@ app.post('/api/upload', upload.array('file', 10), async (req, res) => {
         const fileType = path.extname(file.originalname).toLowerCase();
         console.log(`Processing file: ${file.originalname} (${fileType})`);
         
-        const content = await parseDocument(file.path, fileType);
+        // Parse document from buffer instead of file path
+        const content = await parseDocumentFromBuffer(file.buffer, fileType);
         
         // Check if content is meaningful
         if (!content || content.trim().length === 0) {
@@ -263,7 +230,6 @@ app.post('/api/upload', upload.array('file', 10), async (req, res) => {
         const document = {
           id: uuidv4(),
           filename: file.originalname,
-          filepath: file.path,
           content: content,
           uploadTime: new Date().toISOString(),
           fileType: fileType
@@ -285,13 +251,6 @@ app.post('/api/upload', upload.array('file', 10), async (req, res) => {
           filename: file.originalname,
           error: parseError.message
         });
-        
-        // Clean up the uploaded file if parsing failed
-        try {
-          fs.unlinkSync(file.path);
-        } catch (unlinkError) {
-          console.error('Failed to delete file after parsing error:', unlinkError);
-        }
       }
     }
 
@@ -329,23 +288,14 @@ app.get('/api/documents', (req, res) => {
   res.json({ documents: documentsList });
 });
 
-// Delete a document by ID
+// Delete a document by ID (memory-based for Vercel)
 app.delete('/api/documents/:id', (req, res) => {
   const { id } = req.params;
   const docIndex = uploadedDocuments.findIndex(doc => doc.id === id);
   if (docIndex === -1) {
     return res.status(404).json({ error: 'Document not found' });
   }
-  const [removedDoc] = uploadedDocuments.splice(docIndex, 1);
-  // Delete the file from disk
-  try {
-    if (removedDoc.filepath && fs.existsSync(removedDoc.filepath)) {
-      fs.unlinkSync(removedDoc.filepath);
-    }
-  } catch (err) {
-    console.error('Failed to delete file from disk:', err);
-    // Continue even if file deletion fails
-  }
+  uploadedDocuments.splice(docIndex, 1);
   res.json({ message: 'Document deleted', id });
 });
 
