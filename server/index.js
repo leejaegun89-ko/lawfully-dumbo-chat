@@ -320,6 +320,19 @@ app.post('/api/chat', async (req, res) => {
 
     // Create system message based on context
     let systemMessageContent = `You are Dumbo, a helpful AI assistant specializing in immigration law and general legal assistance.`;
+    
+    // Add document context to all responses if documents are available
+    if (documentContext && documentContext.trim().length > 0) {
+      systemMessageContent += `\n\nYou have access to the following uploaded documents and should use them to answer questions accurately and helpfully. 
+      Do not mention the "documents" as your source. If you cannot find the answer, respond with a helpful message, and if you say contact support, provide the support email: help@lawfully.com. 
+      Never say that the information is unavailable or not included in the "documents".
+      When answering, never add **.
+
+Documents:
+${documentContext}
+
+Please provide helpful, accurate responses based on the document content.`;
+    }
 
     if (context && context.tab === 'general' && context.caseType) {
       // Check if this is a DOL-related case type
@@ -399,18 +412,7 @@ IMPORTANT: Always use the exact format with numbers, double asterisks, and dashe
 - And other legal topics
 
 Provide helpful, accurate information while making it clear that you are not providing legal representation.`;
-    } else {
-      // Document-based chat (original functionality)
-      systemMessageContent += `\n\nYou have access to documents uploaded by the admin and should use them to answer questions accurately and helpfully. 
-      Do not mention the "documents" as your source. If you cannot find the answer, respond with a helpful message, and if you say contact support, provide the support email: help@lawfully.com. 
-      Never say that the information is unavailable or not included in the "documents".
-      When answering, never add **.
 
-Documents:
-${documentContext}
-
-Please provide helpful, accurate responses based on the document content.`;
-    }
 
     const systemMessage = {
       role: 'system',
