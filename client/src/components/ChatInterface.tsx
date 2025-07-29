@@ -7,6 +7,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  buttons?: string[];
 }
 
 interface ChatInterfaceProps {
@@ -42,18 +43,21 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+  const sendMessage = async (messageContent?: string) => {
+    const content = messageContent || inputMessage.trim();
+    if (!content || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputMessage.trim(),
+      content: content,
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    if (!messageContent) {
+      setInputMessage('');
+    }
     setIsLoading(true);
 
     try {
@@ -74,11 +78,15 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
 
       const data = await response.json();
       
+      // Check if the response contains button options
+      const buttonOptions = extractButtonOptions(data.response);
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
+        buttons: buttonOptions.length > 0 ? buttonOptions : undefined,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -94,6 +102,30 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSendMessage = () => {
+    sendMessage();
+  };
+
+  // Extract button options from AI response
+  const extractButtonOptions = (content: string): string[] => {
+    const buttonOptions: string[] = [];
+    
+    // Look for numbered list patterns like "1. **Processing Time**"
+    const buttonPattern = /\d+\.\s+\*\*([^*]+)\*\*/g;
+    let match;
+    
+    while ((match = buttonPattern.exec(content)) !== null) {
+      buttonOptions.push(match[1].trim());
+    }
+    
+    return buttonOptions;
+  };
+
+  // Handle button click
+  const handleButtonClick = (buttonText: string) => {
+    sendMessage(buttonText);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -187,6 +219,22 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
                   className={`chat-bubble-${message.role === 'user' ? 'user' : 'ai'} max-w-full`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  
+                  {/* Button options */}
+                  {message.buttons && message.buttons.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {message.buttons.map((buttonText, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleButtonClick(buttonText)}
+                          className="px-3 py-1.5 text-xs bg-accent-blue/10 text-accent-blue border border-accent-blue/30 rounded-lg hover:bg-accent-blue/20 transition-colors"
+                        >
+                          {buttonText}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  
                   <p
                     className={`text-xs mt-1 text-accent-gray`}
                   >
@@ -235,9 +283,9 @@ const ChatInterface = forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ isAdmi
             disabled={isLoading}
           />
           <button
-            onClick={sendMessage}
+            onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading}
-            className="btn-main disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="btn-main disabled:opacity-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
             <Send className="w-4 h-4" />
           </button>

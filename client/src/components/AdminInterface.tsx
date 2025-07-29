@@ -201,7 +201,7 @@ const AdminInterface: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const { logoUrl, refetchLogo, setLogoUrlDirectly } = useLogo();
+  const { logoUrl, refetchLogo } = useLogo();
   const chatRef = useRef<ChatInterfaceRef>(null);
   const immigrationChatRef = useRef<ImmigrationChatRef>(null);
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
@@ -249,22 +249,8 @@ const AdminInterface: React.FC = () => {
     console.log('Logo uploaded:', logoUrl);
     // 로고 업로드 후 즉시 새로고침하여 새로운 로고를 표시
     try {
-      // 로고 URL을 직접 설정하여 즉시 반영
-      if (logoUrl && logoUrl.includes('/api/logo-file')) {
-        console.log('Setting new logo URL directly:', logoUrl);
-        setLogoUrlDirectly(logoUrl);
-        
-        // 추가로 API 새로고침도 시도
-        setTimeout(async () => {
-          try {
-            await refetchLogo();
-            console.log('Logo refreshed successfully');
-          } catch (error) {
-            console.log('Logo refresh failed, but continuing with direct URL');
-          }
-        }, 200);
-      }
-      
+      await refetchLogo();
+      console.log('Logo refreshed successfully');
     } catch (error) {
       console.error('Failed to refresh logo:', error);
     }

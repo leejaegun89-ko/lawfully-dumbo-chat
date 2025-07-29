@@ -380,165 +380,63 @@ app.post('/api/chat', async (req, res) => {
         // DOL-specific context
         systemMessageContent += `\n\nYou are currently helping with: ${context.caseType}
         
-You are an expert immigration attorney with deep knowledge of U.S. Department of Labor (DOL) processes and employment-based immigration. When asked about journey information for ${context.caseType}, provide a comprehensive, structured response including:
+You are an expert immigration attorney with deep knowledge of U.S. Department of Labor (DOL) processes and employment-based immigration. 
 
-**TYPICAL PROCESSING TIME:**
-- Overall timeline from start to finish
-- DOL processing timeframes
-- USCIS processing timeframes (if applicable)
-- Timeframes for each major step
+When the user asks about ${context.caseType}, provide them with clickable button options for different aspects of the journey. You MUST format the response exactly like this:
 
-**STEP-BY-STEP PROCESS:**
-1. Initial case evaluation and preparation
-2. Prevailing Wage Determination (if required)
-3. Recruitment process (if applicable)
-4. DOL application submission
-5. DOL processing and review
-6. Audit or supervised recruitment (if triggered)
-7. DOL certification or denial
-8. USCIS filing (if applicable)
-9. Final decision and next steps
+1. **Case Overview** - Basic information and eligibility
+2. **Processing Time & Timeline** - Overall timeframes and expectations
+3. **Step-by-Step Process** - Detailed process breakdown
+4. **Required Documents** - Essential documents and forms needed
+5. **Common Issues / Red Flags** - Problems to watch out for
+6. **Unexpected Issues & Troubleshooting** - How to handle problems
+7. **Compliance & Legal Requirements** - DOL compliance obligations
+8. **Costs & Financial Considerations** - Financial aspects and fees
+9. **Additional Considerations & Tips** - Important tips and strategies
+10. **Post-Approval** - What happens after approval
 
-**REQUIRED DOCUMENTS:**
-- Complete list of necessary DOL forms and documents
-- Specific requirements for each document
-- Where to obtain each document
-- Employer attestations and certifications
-
-**POTENTIAL ISSUES AND DELAYS:**
-- Common DOL audit triggers
-- Recruitment compliance issues
-- Prevailing wage challenges
-- Documentation deficiencies
-- How to avoid or minimize delays
-- What to do if issues occur
-
-**EXPECTED TIMELINE FOR EACH STEP:**
-- Detailed breakdown of DOL timeframes
-- Factors that can affect timing
-- Realistic expectations for each phase
-- Current processing trends
-
-**UNEXPECTED ISSUES - WHAT TO DO:**
-- How to handle DOL audits
-- How to respond to Requests for Information (RFI)
-- What to do if denied by DOL
-- Appeal processes (BALCA)
-- When to seek legal representation
-- Reconsideration requests
-
-**DOL COMPLIANCE REQUIREMENTS:**
-- Public Access File (PAF) requirements
-- Recordkeeping obligations
-- Reporting requirements
-- Compliance monitoring
-- Penalties for non-compliance
-
-**ADDITIONAL CONSIDERATIONS:**
-- Recent DOL policy changes
-- Current processing trends
-- Tips for successful DOL certification
-- Cost considerations
-- Alternative strategies if denied
-
-Always provide practical, actionable advice while making it clear that you are not providing legal representation. If someone needs specific legal advice, recommend consulting with a qualified immigration attorney.`;
+IMPORTANT: Always use the exact format with numbers, double asterisks, and dashes as shown above. Do not change the formatting or add extra text before or after the numbered list.`;
       } else {
         // Regular immigration case type context
         systemMessageContent += `\n\nYou are currently helping with: ${context.caseType}
         
-You are an expert immigration attorney with deep knowledge of U.S. immigration law. When asked about journey information for ${context.caseType}, provide a comprehensive, structured response including:
+You are an expert immigration attorney with deep knowledge of U.S. immigration law.
 
-**TYPICAL PROCESSING TIME:**
-- Overall timeline from start to finish
-- Timeframes for each major step
+When the user asks about ${context.caseType}, provide them with clickable button options for different aspects of the journey. You MUST format the response exactly like this:
 
-**STEP-BY-STEP PROCESS:**
-1. Initial preparation and documentation
-2. Application submission
-3. USCIS processing and review
-4. Additional requests (if any)
-5. Final decision and next steps
+1. **Case Overview** - Basic information and eligibility
+2. **Processing Time & Timeline** - Overall timeframes and expectations
+3. **Step-by-Step Process** - Detailed process breakdown
+4. **Required Documents** - Essential documents and forms needed
+5. **Common Issues / Red Flags** - Problems to watch out for
+6. **Unexpected Issues & Troubleshooting** - How to handle problems
+7. **Compliance & Legal Requirements** - Legal obligations and requirements
+8. **Costs & Financial Considerations** - Financial aspects and fees
+9. **Additional Considerations & Tips** - Important tips and strategies
+10. **Post-Approval** - What happens after approval
 
-**REQUIRED DOCUMENTS:**
-- Complete list of necessary documents
-- Specific requirements for each document
-- Where to obtain each document
-
-**POTENTIAL ISSUES AND DELAYS:**
-- Common problems that can arise
-- How to avoid or minimize delays
-- What to do if issues occur
-
-**EXPECTED TIMELINE FOR EACH STEP:**
-- Detailed breakdown of timeframes
-- Factors that can affect timing
-- Realistic expectations
-
-**UNEXPECTED ISSUES - WHAT TO DO:**
-- How to handle RFEs (Requests for Evidence)
-- What to do if denied
-- Appeal processes if applicable
-- When to seek legal representation
-
-**ADDITIONAL CONSIDERATIONS:**
-- Recent policy changes affecting this case type
-- Current processing trends
-- Tips for success
-
-Always provide practical, actionable advice while making it clear that you are not providing legal representation. If someone needs specific legal advice, recommend consulting with a qualified immigration attorney.`;
+IMPORTANT: Always use the exact format with numbers, double asterisks, and dashes as shown above. Do not change the formatting or add extra text before or after the numbered list.`;
       }
     } else if (context && context.tab === 'beyond' && context.domain) {
       // Legal domain specific context
       systemMessageContent += `\n\nYou are currently helping with: ${context.domain}
       
-You are an expert attorney with deep knowledge of ${context.domain}. When asked about journey information for ${context.domain}, provide a comprehensive, structured response including:
+You are an expert attorney with deep knowledge of ${context.domain}.
 
-**TYPICAL PROCESSING TIME AND LEGAL PROCEDURES:**
-- Overall timeline for legal processes in this domain
-- Timeframes for different types of cases
-- Court procedures and administrative processes
+When the user asks about ${context.domain}, provide them with clickable button options for different aspects of the legal process. You MUST format the response exactly like this:
 
-**STEP-BY-STEP LEGAL PROCESS:**
-1. Initial consultation and case evaluation
-2. Document preparation and filing
-3. Legal proceedings and hearings
-4. Negotiations or mediation (if applicable)
-5. Court decisions and appeals process
-6. Final resolution and follow-up
+1. **Case Overview** - Basic information and legal framework
+2. **Processing Time & Timeline** - Overall timeframes and court procedures
+3. **Step-by-Step Process** - Detailed legal process breakdown
+4. **Required Documents** - Essential documentation and evidence
+5. **Common Issues / Red Flags** - Legal obstacles and challenges
+6. **Unexpected Issues & Troubleshooting** - How to handle legal problems
+7. **Compliance & Legal Requirements** - Legal obligations and requirements
+8. **Costs & Financial Considerations** - Legal fees and financial aspects
+9. **Additional Considerations & Tips** - Strategic considerations and tips
+10. **Post-Resolution** - What happens after case resolution
 
-**REQUIRED DOCUMENTATION AND EVIDENCE:**
-- Complete list of necessary legal documents
-- Evidence requirements and standards
-- Expert witness requirements (if applicable)
-- Filing requirements and deadlines
-
-**POTENTIAL LEGAL ISSUES AND CHALLENGES:**
-- Common legal obstacles and complications
-- Procedural challenges and how to address them
-- Potential delays and their causes
-- Risk factors and mitigation strategies
-
-**EXPECTED TIMELINE FOR EACH STEP:**
-- Detailed breakdown of timeframes for each phase
-- Factors that can affect timing
-- Realistic expectations for different case types
-- Court scheduling and administrative delays
-
-**UNEXPECTED LEGAL ISSUES - WHAT TO DO:**
-- How to handle procedural objections
-- What to do if case is dismissed or denied
-- Appeal processes and requirements
-- When to seek additional legal representation
-- Emergency legal procedures if applicable
-
-**ADDITIONAL CONSIDERATIONS:**
-- Recent legal developments affecting this domain
-- Current trends in case law and legislation
-- Strategic considerations for success
-- Cost considerations and fee structures
-- Alternative dispute resolution options
-
-Always provide practical, actionable advice while making it clear that you are not providing legal representation. If someone needs specific legal advice, recommend consulting with a qualified attorney specializing in ${context.domain}.`;
+IMPORTANT: Always use the exact format with numbers, double asterisks, and dashes as shown above. Do not change the formatting or add extra text before or after the numbered list.`;
     } else if (context && context.tab === 'beyond') {
       // Beyond immigration context (general)
       systemMessageContent += `\n\nYou are helping with questions beyond immigration law. This could include:
@@ -581,15 +479,65 @@ Please provide helpful, accurate responses based on the document content.`;
       content: message
     };
 
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [systemMessage, ...conversationHistory, userMessage],
-      max_tokens: 1000,
-      temperature: 0.7
-    });
+    // Check if this is a button click (specific option request)
+    const isButtonClick = [
+      'Case Overview', 'Processing Time & Timeline', 'Step-by-Step Process', 
+      'Required Documents', 'Common Issues / Red Flags', 'Unexpected Issues & Troubleshooting', 
+      'Compliance & Legal Requirements', 'Costs & Financial Considerations', 
+      'Additional Considerations & Tips', 'Post-Approval', 'Post-Resolution'
+    ].some(option => message.includes(option));
 
-    const assistantResponse = completion.choices[0].message.content;
+    let assistantResponse;
+    
+    if (isButtonClick) {
+      // Provide simple, concise response for specific button option
+      let detailedPrompt = '';
+      
+      if (message.includes('Case Overview')) {
+        detailedPrompt = `Provide a simple, brief overview of ${context?.caseType || context?.domain || 'this case'}. Include basic eligibility requirements and key points. Keep it concise and easy to understand.`;
+      } else if (message.includes('Processing Time & Timeline')) {
+        detailedPrompt = `Provide simple, clear information about processing time for ${context?.caseType || context?.domain || 'this case'}. Include overall timeline and major milestones. Keep it brief and practical.`;
+      } else if (message.includes('Step-by-Step Process')) {
+        detailedPrompt = `Provide a simple, clear step-by-step process for ${context?.caseType || context?.domain || 'this case'}. Break down into 3-5 main steps. Keep it concise and actionable.`;
+      } else if (message.includes('Required Documents')) {
+        detailedPrompt = `List the essential documents needed for ${context?.caseType || context?.domain || 'this case'}. Keep it simple - just the most important documents.`;
+      } else if (message.includes('Common Issues / Red Flags')) {
+        detailedPrompt = `List the most common problems and red flags for ${context?.caseType || context?.domain || 'this case'}. Keep it simple - just the key issues to watch out for.`;
+      } else if (message.includes('Unexpected Issues & Troubleshooting')) {
+        detailedPrompt = `Provide simple guidance on what to do when problems arise with ${context?.caseType || context?.domain || 'this case'}. Keep it practical and actionable.`;
+      } else if (message.includes('Compliance & Legal Requirements')) {
+        detailedPrompt = `Explain the key compliance requirements for ${context?.caseType || context?.domain || 'this case'}. Keep it simple - just the most important obligations.`;
+      } else if (message.includes('Costs & Financial Considerations')) {
+        detailedPrompt = `Provide simple information about costs and financial aspects for ${context?.caseType || context?.domain || 'this case'}. Include main fees and cost considerations.`;
+      } else if (message.includes('Additional Considerations & Tips')) {
+        detailedPrompt = `Provide simple, practical tips for ${context?.caseType || context?.domain || 'this case'}. Keep it brief and actionable.`;
+      } else if (message.includes('Post-Approval') || message.includes('Post-Resolution')) {
+        detailedPrompt = `Explain what happens after approval/resolution for ${context?.caseType || context?.domain || 'this case'}. Keep it simple and clear.`;
+      }
+      
+      const detailedCompletion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          systemMessage, 
+          ...conversationHistory, 
+          { role: 'user', content: detailedPrompt }
+        ],
+        max_tokens: 1500,
+        temperature: 0.7
+      });
+      
+      assistantResponse = detailedCompletion.choices[0].message.content;
+    } else {
+      // Regular chat response
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [systemMessage, ...conversationHistory, userMessage],
+        max_tokens: 1000,
+        temperature: 0.7
+      });
+
+      assistantResponse = completion.choices[0].message.content;
+    }
 
     // Store messages in session
     chatSessions[sessionId].push(userMessage);

@@ -10,6 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  buttons?: string[];
 }
 
 interface ImmigrationChatProps {
@@ -61,18 +62,21 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+  const sendMessage = async (messageContent?: string) => {
+    const content = messageContent || inputMessage.trim();
+    if (!content || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputMessage.trim(),
+      content: content,
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    if (!messageContent) {
+      setInputMessage('');
+    }
     setIsLoading(true);
 
     try {
@@ -98,11 +102,15 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
 
       const data = await response.json();
       
+      // Check if the response contains button options
+      const buttonOptions = extractButtonOptions(data.response);
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
+        buttons: buttonOptions.length > 0 ? buttonOptions : undefined,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -118,6 +126,30 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Extract button options from AI response
+  const extractButtonOptions = (content: string): string[] => {
+    const buttonOptions: string[] = [];
+    
+    // Look for numbered list patterns like "1. **Processing Time**"
+    const buttonPattern = /\d+\.\s+\*\*([^*]+)\*\*/g;
+    let match;
+    
+    while ((match = buttonPattern.exec(content)) !== null) {
+      buttonOptions.push(match[1].trim());
+    }
+    
+    return buttonOptions;
+  };
+
+  // Handle button click
+  const handleButtonClick = (buttonText: string) => {
+    sendMessage(buttonText);
+  };
+
+  const handleSendMessage = () => {
+    sendMessage();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -137,13 +169,7 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
     setSessionId(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
     
     // Automatically send a message requesting journey information
-    const journeyMessage = `Please provide a comprehensive journey overview for ${caseType}, including:
-1. Typical processing time
-2. Step-by-step process
-3. Required documents
-4. Potential issues and delays
-5. Expected timeline for each step
-6. What to do if unexpected issues arise`;
+    const journeyMessage = `Please provide journey information for ${caseType}`;
     
     // Add the message to the chat and send it
     const newMessage: Message = {
@@ -182,11 +208,15 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
 
       const data = await response.json();
       
+      // Check if the response contains button options
+      const buttonOptions = extractButtonOptions(data.response);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        buttons: buttonOptions.length > 0 ? buttonOptions : undefined,
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -210,13 +240,7 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
     setSessionId(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
     
     // Automatically send a message requesting journey information
-    const journeyMessage = `Please provide a comprehensive journey overview for ${domain}, including:
-1. Typical processing time and legal procedures
-2. Step-by-step legal process
-3. Required documentation and evidence
-4. Potential legal issues and challenges
-5. Expected timeline for each step
-6. What to do if unexpected legal issues arise`;
+    const journeyMessage = `Please provide journey information for ${domain}`;
     
     // Add the message to the chat and send it
     const newMessage: Message = {
@@ -255,11 +279,15 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
 
       const data = await response.json();
       
+      // Check if the response contains button options
+      const buttonOptions = extractButtonOptions(data.response);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        buttons: buttonOptions.length > 0 ? buttonOptions : undefined,
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -413,6 +441,21 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
                           >
                             {message.content}
                           </ReactMarkdown>
+                          
+                          {/* Button options */}
+                          {message.buttons && message.buttons.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {message.buttons.map((buttonText, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => handleButtonClick(buttonText)}
+                                  className="px-3 py-1.5 text-xs bg-accent-blue/10 text-accent-blue border border-accent-blue/30 rounded-lg hover:bg-accent-blue/20 transition-colors"
+                                >
+                                  {buttonText}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -475,7 +518,7 @@ const ImmigrationChat = forwardRef<ImmigrationChatRef, ImmigrationChatProps>(({ 
                 disabled={isLoading || (activeTab === 'general' && !selectedCaseType) || (activeTab === 'beyond' && !selectedDomain)}
               />
               <button
-                onClick={sendMessage}
+                onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading || (activeTab === 'general' && !selectedCaseType) || (activeTab === 'beyond' && !selectedDomain)}
                 className="btn-main disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
