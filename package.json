@@ -1,34 +1,16 @@
 {
-  "name": "lawfully-dumbo",
+  "name": "lawfully-dumbo-chat",
   "version": "1.0.0",
-  "description": "A document-based chatbot application with admin interface and shareable chat URLs",
-  "main": "server/index.js",
+  "description": "Lawfully Dumbo Chat Application",
   "scripts": {
-    "predev": "lsof -ti:3000,5001 | xargs kill -9 || true",
-    "dev": "concurrently --kill-others-on-fail --prefix-colors \"blue.bold,green.bold\" --prefix \"[{name}]\" --names \"SERVER,CLIENT\" \"npm run server\" \"npm run client\"",
-    "server": "cd server && PORT=5001 npm run dev",
-    "client": "cd client && npm start",
-    "build": "cd client && npm run build",
-    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "prepare": "cd client && npm install",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d client/build"
-  },
-  "keywords": [
-    "chatbot",
-    "document-qa",
-    "openai",
-    "react"
-  ],
-  "author": "Lawfully Dumbo",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2",
-    "gh-pages": "^6.3.0"
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && npm install && npm start",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\""
   },
   "dependencies": {
-    "openai": "^5.8.2",
-    "formidable": "^3.5.1",
-    "uuid": "^9.0.1"
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

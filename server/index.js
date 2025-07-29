@@ -642,8 +642,14 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Admin interface: http://localhost:${PORT}`);
-  console.log(`Make sure to set OPENAI_API_KEY in your environment variables`);
-}); 
+// For Vercel deployment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Admin interface: http://localhost:${PORT}`);
+    console.log(`Make sure to set OPENAI_API_KEY in your environment variables`);
+  });
+}
+
+// Export for Vercel
+module.exports = app; 
