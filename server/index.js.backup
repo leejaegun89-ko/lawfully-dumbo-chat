@@ -412,7 +412,7 @@ IMPORTANT: Always use the exact format with numbers, double asterisks, and dashe
 - And other legal topics
 
 Provide helpful, accurate information while making it clear that you are not providing legal representation.`;
-    }
+
 
     const systemMessage = {
       role: 'system',
