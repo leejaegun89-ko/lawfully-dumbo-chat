@@ -10,7 +10,16 @@ export const useLogo = () => {
     setError(null);
     
     try {
-      // 캐시 버스팅을 위한 타임스탬프 추가
+      // 먼저 로컬 스토리지에서 로고 확인
+      const localLogo = localStorage.getItem('lawfully-logo');
+      if (localLogo) {
+        console.log('Logo loaded from local storage');
+        setLogoUrl(localLogo);
+        setIsLoading(false);
+        return;
+      }
+
+      // 서버에서 로고 가져오기 시도
       const response = await fetch(`/api/logo?t=${Date.now()}`, {
         cache: 'no-cache',
         headers: {
@@ -26,12 +35,10 @@ export const useLogo = () => {
       const data = await response.json();
       
       if (data.logoUrl) {
-        console.log('Logo fetched successfully:', data.logoUrl);
-        // 캐시 버스팅을 위한 타임스탬프 추가
-        const cacheBustingUrl = data.logoUrl.includes('?') 
-          ? `${data.logoUrl}&t=${Date.now()}` 
-          : `${data.logoUrl}?t=${Date.now()}`;
-        setLogoUrl(cacheBustingUrl);
+        console.log('Logo fetched from server successfully');
+        // 로컬 스토리지에 저장
+        localStorage.setItem('lawfully-logo', data.logoUrl);
+        setLogoUrl(data.logoUrl);
       } else {
         console.log('No logo found on server');
         setLogoUrl(null);
@@ -44,9 +51,15 @@ export const useLogo = () => {
     }
   };
 
+  const updateLogo = (newLogoUrl: string) => {
+    // 로컬 스토리지에 저장하고 상태 업데이트
+    localStorage.setItem('lawfully-logo', newLogoUrl);
+    setLogoUrl(newLogoUrl);
+  };
+
   useEffect(() => {
     fetchLogo();
   }, []);
 
-  return { logoUrl, isLoading, error, refetchLogo: fetchLogo };
+  return { logoUrl, isLoading, error, refetchLogo: fetchLogo, updateLogo };
 }; 

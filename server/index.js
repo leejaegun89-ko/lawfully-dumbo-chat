@@ -37,6 +37,9 @@ let chatSessions = {};
 let inMemoryFiles = new Map();
 let inMemoryLogo = null;
 
+// Logo file path for Vercel deployment
+const LOGO_FILE = path.join(__dirname, 'logo.json');
+
 // Configure multer for file uploads (memory storage for Vercel)
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -71,10 +74,15 @@ const logoUpload = multer({
   }
 });
 
-// Get current logo (memory-based for Vercel)
+// Get current logo (file-based for Vercel)
 app.get('/api/logo', (req, res) => {
   try {
-    if (inMemoryLogo) {
+    // Try to load from file first
+    if (fs.existsSync(LOGO_FILE)) {
+      const logoData = JSON.parse(fs.readFileSync(LOGO_FILE, 'utf-8'));
+      res.json({ logoUrl: logoData.logoUrl });
+    } else if (inMemoryLogo) {
+      // Fallback to memory if file doesn't exist
       res.json({ logoUrl: inMemoryLogo });
     } else {
       res.json({ logoUrl: null });
@@ -93,15 +101,23 @@ app.post('/api/logo', logoUpload.single('logo'), (req, res) => {
   console.log(`Logo uploaded: ${req.file.originalname}`);
   
   try {
-    // Convert file buffer to base64 for in-memory storage
+    // Convert file buffer to base64 for file storage
     const base64Data = req.file.buffer.toString('base64');
     const mimeType = req.file.mimetype;
     const logoUrl = `data:${mimeType};base64,${base64Data}`;
     
-    // Store in memory
+    // Store in memory and file
     inMemoryLogo = logoUrl;
     
-    console.log(`Logo stored in memory: ${req.file.originalname}`);
+    // Save to file for persistence
+    const logoData = {
+      logoUrl: logoUrl,
+      uploadedAt: new Date().toISOString(),
+      filename: req.file.originalname
+    };
+    fs.writeFileSync(LOGO_FILE, JSON.stringify(logoData, null, 2), 'utf-8');
+    
+    console.log(`Logo stored in memory and file: ${req.file.originalname}`);
     res.json({ logoUrl: logoUrl });
   } catch (error) {
     console.error('Error processing logo:', error);

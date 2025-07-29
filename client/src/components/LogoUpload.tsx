@@ -44,6 +44,8 @@ const LogoUpload: React.FC<{ onUpload: (url: string) => void }> = ({ onUpload })
       const data = await res.json();
       if (data.logoUrl) {
         console.log('Logo uploaded successfully:', data.logoUrl);
+        // 로컬 스토리지에 저장
+        localStorage.setItem('lawfully-logo', data.logoUrl);
         onUpload(data.logoUrl);
         // 성공 메시지 표시
         alert('Logo uploaded successfully!');
